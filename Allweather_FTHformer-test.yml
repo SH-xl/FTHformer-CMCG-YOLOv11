@@ -1,0 +1,89 @@
+name: Test_All_Weather_BestModel
+model_type: ImageCleanModel
+is_train: false
+dist: false
+scale: 1
+num_gpu: 1
+manual_seed: 100
+
+datasets:
+  test_hazy:
+    name: Hazy-Test
+    type: Dataset_PairedImage
+    dataroot_gt: /home/waas/Histoformer-main/data1/test/hazy/gt_resized
+    dataroot_lq: /home/waas/Histoformer-main/data1/test/hazy/input_resized
+    batch_size: 1
+    io_backend:
+      type: disk
+  test_rain:
+    name: Rain-Test
+    type: Dataset_PairedImage
+    dataroot_gt: /home/waas/Histoformer-main/data1/test/rain/gt_resized
+    dataroot_lq: /home/waas/Histoformer-main/data1/test/rain/input_resized
+    batch_size: 1
+    io_backend:
+      type: disk
+  test_snow:
+    name: Snow-Test
+    type: Dataset_PairedImage
+    dataroot_gt: /home/waas/Histoformer-main/data1/test/snow/gt_resized
+    dataroot_lq: /home/waas/Histoformer-main/data1/test/snow/input_resized
+    batch_size: 1
+    io_backend:
+      type: disk
+  test_raindrop:
+    name: Raindrop-Test
+    type: Dataset_PairedImage
+    dataroot_gt: /home/waas/Histoformer-main/data1/test/raindrop/gt_resized
+    dataroot_lq: /home/waas/Histoformer-main/data1/test/raindrop/input_resized
+    batch_size: 1
+    io_backend:
+      type: disk
+  test_blur:
+    name: Blur-Test
+    type: Dataset_PairedImage
+    dataroot_gt: /home/waas/Histoformer-main/data1/test/blur/gt_resized
+    dataroot_lq: /home/waas/Histoformer-main/data1/test/blur/input_resized
+    batch_size: 1
+    io_backend:
+      type: disk
+
+path:
+  pretrain_network_g: /home/waas/Histoformer-main/experiments-gj/Allweather_Histotormer/models/net_g_300000.pth # ← 你的最好权重
+  strict_load_g: true
+
+val:
+  window_size: 8
+  tile_size: 192  # ← 新增：测试时切成 192×192 patch 处理（推荐）
+  tile_overlap: 32  # 建议 16–64，避免边界缝隙
+  save_img: true
+  num_test: -1
+  rgb2bgr: true
+  use_image: true
+  save_best: false  # ← 新增这一行！禁用保存 best 权重
+  metrics:
+    psnr:
+      type: calculate_psnr
+      crop_border: 0
+      test_y_channel: true
+    ssim:
+      type: calculate_ssim
+      crop_border: 0
+      test_y_channel: true
+
+train:
+  mixing_augs:
+    mixup: false
+
+network_g:
+  type: Histoformer
+  inp_channels: 3
+  out_channels: 3
+  dim: 36
+  num_blocks: [4, 4, 6, 8]
+  num_refinement_blocks: 4
+  heads: [1, 2, 4, 8]
+  ffn_expansion_factor: 2.667
+  bias: false
+  LayerNorm_type: WithBias
+  dual_pixel_task: false
