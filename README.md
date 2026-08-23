@@ -6,7 +6,7 @@ This repository provides the implementation of "FTHformer-CMCG-YOLOv11", a seque
 The framework is designed to improve defect recognition from degraded UAV images under multiple adverse imaging conditions.
 # Framework
 The complete processing pipeline is:
-'''
+
 Degraded image
         ↓
 FTHformer Image Recovery
@@ -16,4 +16,3 @@ Restored Image
 CMCG-YOLOv11 defect detection
         ↓
 Defect category and bounding box
-'''
